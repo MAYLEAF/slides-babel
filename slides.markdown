@@ -7,7 +7,7 @@ FO4M
 
 ---
 
-## TL;DR:
+## TL;DR
 
 - ECMAScript 표준은 계속 진화중
 - babel; 최신 표준을 즉시 사용할 수 있게 해주는 도구
@@ -36,19 +36,53 @@ class: center, middle
 - 6to5
 - founder 는 facebook 으로 이직 성공 ^^
 - babel 로 이름을 바꾸며 주요 툴로 자리잡았고, tc39 와도 많은 접점
+- react (jsx), flow, vue 등 유우명 프로젝트에서 활발히 사용 중
+
+---
+
+## why babel?
+
+- js 세계에서 parser, transpiler 의 표준이 되고자 하는 시도
+
+???
+
+- [Not Born to Die](https://babeljs.io/blog/2015/02/15/not-born-to-die) 문서에서 말하듯 야심있는 프로젝트
+- parser, transpiler (and compiler)
+- ESTree
+
+--
+- 였지만 잘 되진 않았다고 한다.
+
+???
+
+- eslint, uglify, typescript 등 많은 프로젝트가 각기 다른 js parser 사용
+- founder 가 재직중인 fb 프로젝트에서는 열심히 사용중
+
+--
+- 그래도 es6 to es5 분야에서만큼은 표준.
 
 ---
 
 ## AST
 
-- 
-
+- compiler frontend 의 결과물
+- 문법 구조를 반영한 트리 + 메타데이터
 
 ---
 
 class: center, middle
 
 # _Demo_
+
+[AST Explorer](https://astexplorer.net/)
+
+---
+
+class: center, middle
+
+# _Yet Another Demo_
+
+[Babel; Try it out](https://babeljs.io/repl)
 
 ---
 
