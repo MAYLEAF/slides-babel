@@ -59,12 +59,12 @@ _The compiler for writing next generation JavaScript_
 ## stage0 - `const` class
 
 ```javascript
-const class Point { 
+const class Point {
   constructor(x, y) {
     public getX() { return x; }
     public getY() { return y; }
   }
-  toString() { 
+  toString() {
     return '<' + this.getX() + ',' + this.getY() + '>';
   }
 }
@@ -192,7 +192,7 @@ function save(filename = throw new TypeError("Argument required")) {
 }
 
 // Arrow function bodies
-lint(ast, { 
+lint(ast, {
   with: () => throw new Error("avoid using 'with' statements.")
 });
 ```
@@ -227,34 +227,43 @@ export default declare(api => {
 
 ---
 
+## result
+
 ```javascript
-// before
+// future
 function save(filename = throw new TypeError("Argument required")) {
 }
 ```
 
 ```javascript
+// present
 "use strict";
 
 function save() {
-  var filename = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function (e) {
-    throw e;
-  }(new TypeError("Argument required"));
+  var filename = arguments.length > 0 && arguments[0] !== undefined ?
+    arguments[0] : function (e) {
+      throw e;
+    }(new TypeError("Argument required"));
 }
-
 ```
-
-# throw 
-
-- 플러그인 처리 내부 동작 소개
 
 ---
 
 ## 간단한 플러그인 제작 과정
 
+-
+
+```javascript
+const map = players.reduce((result, p) => ({ ...result, [p.spid]: true }), {});
+
+```
+
 ---
 
-## 활용 방안
+## iu 쓸까말까 babel
+
+- es6 to actionscript 가능
+- 
 
 ---
 
