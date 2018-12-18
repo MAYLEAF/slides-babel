@@ -249,29 +249,101 @@ function save() {
 
 ---
 
-## 간단한 플러그인 제작 과정
+class: center, middle
 
--
+# Creating a custom plugin
+
+---
+
+## spec
+
+- perl 처럼 함수의 마지막 표현식이 자동으로 리턴되었으면 좋겠다.
 
 ```javascript
-const map = players.reduce((result, p) => ({ ...result, [p.spid]: true }), {});
+function foo() {
+  42;
+}
 
+console.log(foo())
+// >> 42
 ```
+
+---
+
+```javascript
+export default declare(api => {
+  api.assertVersion(7);
+
+  return {
+    name: "auto-return",
+
+    visitor: {
+      FunctionDeclaration(path) {
+        const { body: block } = path.node;
+        const last = block.body[block.body.length - 1];
+        if (!last) return;
+
+        path.traverse({
+          ExpressionStatement(path) {
+            const statement = t.returnStatement(path.node.expression);
+            path.replaceWith(statement);
+          },
+        }, last);
+      }
+    },
+  };
+});
+```
+
+---
+
+## result
+
+```bash
+$ cat foo.js
+function foo() {
+  42;
+}
+
+console.log(foo());
+
+$ npx babel foo.js
+"use strict";
+
+function foo() {
+  return 42;
+}
+
+console.log(foo());
+```
+[http://git.sphd.io/nakim/babel-plugin-auto-return](http://git.sphd.io/nakim/babel-plugin-auto-return)
 
 ---
 
 ## iu 쓸까말까 babel
 
-- es6 to actionscript 가능
-- 
+- es6 to ActionScript 만들 수 있다.
+- 하지만 es6 to es5 용도로만 사용하도록 하자.
+
+???
+
+- 강력한 도구이지만 양날의 검.
+- export default 버그는 많은 사람을 고통에 빠뜨렸음
+- transform 에서 버그가 생겼을 경우 굉장히 힘든 시간을 보낼 것.
 
 ---
 
 ## References
 
-- [example][1]
+- [The State of Babel][1]
+- [Not Born to Die][2]
+- [Babel Plugin Handbook][3]
+- [ECMAScript proposals][4]
 
-[1]: http://example.org/
+[1]: https://babeljs.io/blog/2016/12/07/the-state-of-babel
+[2]: https://babeljs.io/blog/2015/02/15/not-born-to-die
+[3]: https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md
+[4]: https://github.com/tc39/proposals
 
 ---
 
