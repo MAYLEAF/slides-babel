@@ -20,6 +20,14 @@ class: center, middle
 
 ![](https://raw.githubusercontent.com/babel/logo/master/babel.png)
 
+_The compiler for writing next generation JavaScript_
+
+???
+
+- [Sebastian McKenzie](https://github.com/kittens)가 2014에 시작
+- 6to5
+- founder 는 facebook 으로 이직 성공 ^^
+
 ---
 
 ## babel
@@ -28,15 +36,82 @@ class: center, middle
   - parse
   - map plugins to ast
   - write
-- [Sebastian McKenzie](https://github.com/kittens)가 2014에 시작
 
 ???
 
-- The compiler for writing next generation JavaScript
-- 6to5
-- founder 는 facebook 으로 이직 성공 ^^
 - babel 로 이름을 바꾸며 주요 툴로 자리잡았고, tc39 와도 많은 접점
 - react (jsx), flow, vue 등 유우명 프로젝트에서 활발히 사용 중
+
+---
+
+## ECMAScript 표준화 현황
+
+- tc39
+- stages
+  - stage0; Strawman
+  - stage1; Proposal
+  - stage2; Draft
+  - stage3; Candidate
+  - stage4; Finished
+
+---
+
+## stage0 - `const` class
+
+```javascript
+const class Point { 
+  constructor(x, y) {
+    public getX() { return x; }
+    public getY() { return y; }
+  }
+  toString() { 
+    return '<' + this.getX() + ',' + this.getY() + '>';
+  }
+}
+```
+
+---
+
+## stage0 - decimal
+
+```javascript
+0.1 + 0.2
+// >> 0.30000000000000004
+
+0.1m + 0.2m
+// >> 0.3m
+```
+
+---
+
+## stage3 - Private instance methods
+
+```javascript
+class Counter extends HTMLElement {
+  #xValue = 0;
+
+  #clicked() {
+    this.#xValue++;
+  }
+
+  constructor() {
+    super();
+    this.onclick = this.#clicked.bind(this);
+  }
+}
+```
+
+---
+
+## stage4 - Optional `catch` binding
+
+```javascript
+try {
+  // ...
+} catch {
+  // ...
+}
+```
 
 ---
 
@@ -60,6 +135,11 @@ class: center, middle
 
 --
 - 그래도 es6 to es5 분야에서만큼은 표준.
+
+???
+
+- AST 변환의 컨셉
+- lisp macro 와의 유사성
 
 ---
 
@@ -86,20 +166,85 @@ class: center, middle
 
 ---
 
-## ECMA 표준화 현황
+class: center, middle
 
-- tc39, stage[0-3]
-
----
-
-## babel.js 소개
-
-- AST 변환의 컨셉
-- lisp macro 와의 유사성
+# Inside of Babel
 
 ---
 
-## babel.js 대표적 플러그인 소개
+## basic operation
+
+- parse
+- map plugins to ast
+- write
+
+???
+
+- visitor pattern
+
+---
+
+## stage2 - `throw` expressions
+
+```javascript
+// Parameter initializers
+function save(filename = throw new TypeError("Argument required")) {
+}
+
+// Arrow function bodies
+lint(ast, { 
+  with: () => throw new Error("avoid using 'with' statements.")
+});
+```
+
+---
+
+```javascript
+import syntaxThrowExpressions from "@babel/plugin-syntax-throw-expressions";
+
+export default declare(api => {
+  return {
+    name: "proposal-throw-expressions",
+    inherits: syntaxThrowExpressions,
+
+    visitor: {
+      UnaryExpression(path) {
+        const { operator, argument } = path.node;
+        if (operator !== "throw") return;
+
+        const arrow = t.functionExpression(
+          null,
+          [t.identifier("e")],
+          t.blockStatement([t.throwStatement(t.identifier("e"))]),
+        );
+
+        path.replaceWith(t.callExpression(arrow, [argument]));
+      },
+    },
+  };
+});
+```
+
+---
+
+```javascript
+// before
+function save(filename = throw new TypeError("Argument required")) {
+}
+```
+
+```javascript
+"use strict";
+
+function save() {
+  var filename = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function (e) {
+    throw e;
+  }(new TypeError("Argument required"));
+}
+
+```
+
+# throw 
 
 - 플러그인 처리 내부 동작 소개
 
