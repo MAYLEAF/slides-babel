@@ -3,7 +3,7 @@ class: center, middle
 ## Future of JavaScript
 
 김남훈<br>
-FO4M
+<strike>SPEARHEAD</strike> EA Korea
 
 ---
 
